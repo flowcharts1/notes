@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0">
+
+<textarea id="note" style="width:100%; height:100vh; font-size:16px;"></textarea>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  var firebaseConfig = {
+    databaseURL: "https://notes-michael-default-rtdb.firebaseio.com/"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  var db = firebase.database().ref("note");
+  var textarea = document.getElementById("note");
+
+  textarea.focus();
+
+  textarea.addEventListener("input", function() {
+    db.set(textarea.value);
+  });
+
+  db.on("value", function(snapshot) {
+    if (document.activeElement !== textarea) {
+      textarea.value = snapshot.val() || "";
+    }
+  });
+</script>
+
+</body>
+</html>
