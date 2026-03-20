@@ -4,38 +4,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin:0">
-
 <textarea id="note" style="width:100%; height:100vh; font-size:16px;"></textarea>
-
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 <script>
   var firebaseConfig = {
-  apiKey: "AIzaSyBQFZuArle1XI2wdSz0Rfb8sIJFWbcMEmQ",
-  authDomain: "notes-michael.firebaseapp.com",
-  databaseURL: "https://notes-michael-default-rtdb.firebaseio.com",
-  projectId: "notes-michael"
-};
-
-
+    apiKey: "AIzaSyBQFZuArle1XI2wdSz0Rfb8sIJFWbcMEmQ",
+    authDomain: "notes-michael.firebaseapp.com",
+    databaseURL: "https://notes-michael-default-rtdb.firebaseio.com",
+    projectId: "notes-michael"
+  };
   firebase.initializeApp(firebaseConfig);
-
   var db = firebase.database().ref("note");
   var textarea = document.getElementById("note");
-
-  textarea.focus();
+  var loaded = false;
+  var userTyping = false;
 
   textarea.addEventListener("input", function() {
+    userTyping = true;
     db.set(textarea.value);
   });
 
+  textarea.addEventListener("blur", function() {
+    userTyping = false;
+  });
+
   db.on("value", function(snapshot) {
-    if (document.activeElement !== textarea) {
+    if (!loaded || !userTyping) {
       textarea.value = snapshot.val() || "";
+      loaded = true;
     }
   });
-</script>
 
+  textarea.focus();
+</script>
 </body>
 </html>
